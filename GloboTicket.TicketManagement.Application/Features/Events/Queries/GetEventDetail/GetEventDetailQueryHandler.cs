@@ -5,16 +5,17 @@ using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace GloboTicket.TicketManagement.Application.Features.Events
+namespace GloboTicket.TicketManagement.Application.Features.Events.Queries.GetEventDetail
 {
-    public class GetEventDetailQueryHandler : IRequestHandler<GetEventDetailQuery, EventDetailVm>
+    public class GetEventDetailQueryHandler
+        : IRequestHandler<GetEventDetailQuery, EventDetailVm>
     {
         private readonly IAsyncRepository<Event> EventRepository;
         private readonly IAsyncRepository<Category> CategoryRepository;
         private readonly IMapper Mapper;
 
         public GetEventDetailQueryHandler(
-            IMapper mapper, 
+            IMapper mapper,
             IAsyncRepository<Event> eventRepository,
             IAsyncRepository<Category> categoryRepository)
         {
@@ -23,12 +24,14 @@ namespace GloboTicket.TicketManagement.Application.Features.Events
             CategoryRepository = categoryRepository;
         }
 
-        public async Task<EventDetailVm> Handle(GetEventDetailQuery request, CancellationToken cancellationToken)
+        public async Task<EventDetailVm> Handle(
+            GetEventDetailQuery request,
+            CancellationToken cancellationToken)
         {
-            Event @event = await EventRepository.GetByIdAsync(request.Id);
-            EventDetailVm eventDetailDto = Mapper.Map<EventDetailVm>(@event);
+            Event item = await EventRepository.GetByIdAsync(request.Id);
+            EventDetailVm eventDetailDto = Mapper.Map<EventDetailVm>(item);
 
-            Category category = await CategoryRepository.GetByIdAsync(@event.CategoryId);
+            Category category = await CategoryRepository.GetByIdAsync(item.CategoryId);
             eventDetailDto.Category = Mapper.Map<CategoryDto>(category);
 
             return eventDetailDto;
