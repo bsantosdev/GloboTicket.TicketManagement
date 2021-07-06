@@ -12,25 +12,25 @@ namespace GloboTicket.TicketManagement.Application.Features.Categories.Queries.G
     public class GetCategoriesListQueryHandler
         : IRequestHandler<GetCategoriesListQuery, List<CategoryListVm>>
     {
-        private readonly IAsyncRepository<Category> CategoryRepository;
-        private readonly IMapper Mapper;
+        private readonly IAsyncRepository<Category> _categoryRepository;
+        private readonly IMapper _mapper;
 
         public GetCategoriesListQueryHandler(
             IMapper mapper,
             IAsyncRepository<Category> categoryRepository)
         {
-            Mapper = mapper;
-            CategoryRepository = categoryRepository;
+            _mapper = mapper;
+            _categoryRepository = categoryRepository;
         }
 
         public async Task<List<CategoryListVm>> Handle(
             GetCategoriesListQuery request,
             CancellationToken cancellationToken)
         {
-            IOrderedEnumerable<Category> allCategories = (await CategoryRepository
+            IOrderedEnumerable<Category> allCategories = (await _categoryRepository
                 .ListAllAsync()).OrderBy(x => x.Name);
 
-            return Mapper.Map<List<CategoryListVm>>(allCategories);
+            return _mapper.Map<List<CategoryListVm>>(allCategories);
         }
     }
 }

@@ -10,29 +10,29 @@ namespace GloboTicket.TicketManagement.Application.Features.Events.Queries.GetEv
     public class GetEventDetailQueryHandler
         : IRequestHandler<GetEventDetailQuery, EventDetailVm>
     {
-        private readonly IAsyncRepository<Event> EventRepository;
-        private readonly IAsyncRepository<Category> CategoryRepository;
-        private readonly IMapper Mapper;
+        private readonly IAsyncRepository<Event> _eventRepository;
+        private readonly IAsyncRepository<Category> _categoryRepository;
+        private readonly IMapper _mapper;
 
         public GetEventDetailQueryHandler(
             IMapper mapper,
             IAsyncRepository<Event> eventRepository,
             IAsyncRepository<Category> categoryRepository)
         {
-            Mapper = mapper;
-            EventRepository = eventRepository;
-            CategoryRepository = categoryRepository;
+            _mapper = mapper;
+            _eventRepository = eventRepository;
+            _categoryRepository = categoryRepository;
         }
 
         public async Task<EventDetailVm> Handle(
             GetEventDetailQuery request,
             CancellationToken cancellationToken)
         {
-            Event item = await EventRepository.GetByIdAsync(request.Id);
-            EventDetailVm eventDetailDto = Mapper.Map<EventDetailVm>(item);
+            Event item = await _eventRepository.GetByIdAsync(request.Id);
+            EventDetailVm eventDetailDto = _mapper.Map<EventDetailVm>(item);
 
-            Category category = await CategoryRepository.GetByIdAsync(item.CategoryId);
-            eventDetailDto.Category = Mapper.Map<CategoryDto>(category);
+            Category category = await _categoryRepository.GetByIdAsync(item.CategoryId);
+            eventDetailDto.Category = _mapper.Map<CategoryDto>(category);
 
             return eventDetailDto;
         }

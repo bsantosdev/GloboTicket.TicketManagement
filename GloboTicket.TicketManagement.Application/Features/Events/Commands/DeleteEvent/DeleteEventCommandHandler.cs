@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using GloboTicket.TicketManagement.Application.Contracts.Persistence;
+﻿using GloboTicket.TicketManagement.Application.Contracts.Persistence;
 using GloboTicket.TicketManagement.Domain.Entities;
 using MediatR;
 using System.Threading;
@@ -9,24 +8,21 @@ namespace GloboTicket.TicketManagement.Application.Features.Events.Commands.Dele
 {
     public class DeleteEventCommandHandler : IRequestHandler<DeleteEventCommand>
     {
-        private readonly IAsyncRepository<Event> EventRepository;
-        //private readonly IMapper Mapper; // It should be there?
+        private readonly IAsyncRepository<Event> _eventRepository;
 
         public DeleteEventCommandHandler(
-               IMapper mapper,
                IEventRepository eventRepository)
         {
-            //Mapper = mapper;
-            EventRepository = eventRepository;
+            _eventRepository = eventRepository;
         }
 
         public async Task<Unit> Handle(
             DeleteEventCommand request, 
             CancellationToken cancellationToken)
         {
-            Event itemToDelete = await EventRepository.GetByIdAsync(request.EventId);
+            Event itemToDelete = await _eventRepository.GetByIdAsync(request.EventId);
 
-            await EventRepository.DeleteAsync(itemToDelete);
+            await _eventRepository.DeleteAsync(itemToDelete);
 
             return Unit.Value;
         }

@@ -10,26 +10,26 @@ namespace GloboTicket.TicketManagement.Application.Features.Events.Commands.Upda
     public class UpdateEventCommandHandler 
         : IRequestHandler<UpdateEventCommand>
     {
-        private readonly IEventRepository EventRepository;
-        private readonly IMapper Mapper;
+        private readonly IEventRepository _eventRepository;
+        private readonly IMapper _mapper;
 
         public UpdateEventCommandHandler(
             IMapper mapper,
             IEventRepository eventRepository)
         {
-            Mapper = mapper;
-            EventRepository = eventRepository;
+            _mapper = mapper;
+            _eventRepository = eventRepository;
         }
 
         public async Task<Unit> Handle(
             UpdateEventCommand request, 
             CancellationToken cancellationToken)
         {
-            Event itemToUpdate = await EventRepository.GetByIdAsync(request.EventId);
+            Event itemToUpdate = await _eventRepository.GetByIdAsync(request.EventId);
 
-            Mapper.Map(request, itemToUpdate, typeof(UpdateEventCommand), typeof(Event));
+            _mapper.Map(request, itemToUpdate, typeof(UpdateEventCommand), typeof(Event));
 
-            await EventRepository.UpdateAsync(itemToUpdate);
+            await _eventRepository.UpdateAsync(itemToUpdate);
 
             return Unit.Value;
         }
