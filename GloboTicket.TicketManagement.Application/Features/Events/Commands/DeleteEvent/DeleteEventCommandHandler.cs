@@ -1,4 +1,6 @@
-﻿using GloboTicket.TicketManagement.Application.Contracts.Persistence;
+﻿using AutoMapper;
+using GloboTicket.TicketManagement.Application.Contracts.Persistence;
+using GloboTicket.TicketManagement.Application.Exceptions;
 using GloboTicket.TicketManagement.Domain.Entities;
 using MediatR;
 using System.Threading;
@@ -9,20 +11,24 @@ namespace GloboTicket.TicketManagement.Application.Features.Events.Commands.Dele
     public class DeleteEventCommandHandler : IRequestHandler<DeleteEventCommand>
     {
         private readonly IAsyncRepository<Event> _eventRepository;
+        private readonly IMapper _mapper;
 
-        public DeleteEventCommandHandler(
-               IEventRepository eventRepository)
+        public DeleteEventCommandHandler(IMapper mapper, IAsyncRepository<Event> eventRepository)
         {
+            _mapper = mapper;
             _eventRepository = eventRepository;
         }
 
-        public async Task<Unit> Handle(
-            DeleteEventCommand request, 
-            CancellationToken cancellationToken)
+        public async Task<Unit> Handle(DeleteEventCommand request, CancellationToken cancellationToken)
         {
-            Event itemToDelete = await _eventRepository.GetByIdAsync(request.EventId);
+            var eventToDelete = await _eventRepository.GetByIdAsync(request.EventId);
 
-            await _eventRepository.DeleteAsync(itemToDelete);
+            if (eventToDelete == null)
+            {
+                throw new NotFoundException(nameof(Event), request.EventId);
+            }
+
+            await _eventRepository.DeleteAsync(eventToDelete);
 
             return Unit.Value;
         }

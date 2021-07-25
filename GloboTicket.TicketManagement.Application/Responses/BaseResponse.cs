@@ -2,6 +2,8 @@
 
 namespace GloboTicket.TicketManagement.Application.Responses
 {
+    // A great approach is to always return the controller responses inheriting from the base response
+    // so the client could handle an error in a standard way.
     public class BaseResponse
     {
         public BaseResponse()
