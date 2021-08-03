@@ -1,3 +1,4 @@
+using GloboTicket.TicketManagement.Api.Middleware;
 using GloboTicket.TicketManagement.Api.Services;
 using GloboTicket.TicketManagement.Application;
 using GloboTicket.TicketManagement.Application.Contracts;
@@ -42,10 +43,10 @@ namespace GloboTicket.TicketManagement.Api
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo 
-                { 
-                    Title = "GloboTicket.TicketManagement.Api", 
-                    Version = "v1" 
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "GloboTicket.TicketManagement.Api",
+                    Version = "v1"
                 });
 
                 // Ability to test excel file download with Swagger
@@ -62,6 +63,8 @@ namespace GloboTicket.TicketManagement.Api
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "GloboTicket.TicketManagement.Api v1"));
             }
+
+            app.UseCustomExceptionHandler();
 
             app.UseHttpsRedirection();
 

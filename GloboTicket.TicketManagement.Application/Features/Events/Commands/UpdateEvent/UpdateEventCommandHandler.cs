@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using FluentValidation.Results;
 using GloboTicket.TicketManagement.Application.Contracts.Persistence;
+using GloboTicket.TicketManagement.Application.Exceptions;
 using GloboTicket.TicketManagement.Domain.Entities;
 using MediatR;
 using System.Threading;
@@ -25,11 +27,22 @@ namespace GloboTicket.TicketManagement.Application.Features.Events.Commands.Upda
             UpdateEventCommand request, 
             CancellationToken cancellationToken)
         {
-            Event itemToUpdate = await _eventRepository.GetByIdAsync(request.EventId);
+            Event eventToUpdate = await _eventRepository.GetByIdAsync(request.EventId);
 
-            _mapper.Map(request, itemToUpdate, typeof(UpdateEventCommand), typeof(Event));
+            if (eventToUpdate == null)
+            {
+                throw new NotFoundException(nameof(Event), request.EventId);
+            }
 
-            await _eventRepository.UpdateAsync(itemToUpdate);
+            UpdateEventCommandValidator validator = new UpdateEventCommandValidator();
+            ValidationResult validationResult = await validator.ValidateAsync(request);
+
+            if (validationResult.Errors.Count > 0)
+                throw new ValidationException(validationResult);
+
+            _mapper.Map(request, eventToUpdate, typeof(UpdateEventCommand), typeof(Event));
+
+            await _eventRepository.UpdateAsync(eventToUpdate);
 
             return Unit.Value;
         }
